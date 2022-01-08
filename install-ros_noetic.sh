@@ -59,13 +59,48 @@ exit 0
 
 elif [ ${1} = 2 ];
 then
+echo "Agregando sources.list"
+sleep 1
+echo ${passs} | sudo -S sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+echo "Agregando llaves"
+sleep 1
+echo ${passs} | sudo -S apt install -y curl # if you haven't already installed curl
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+echo "Actualizando repositorios"
+sleep 1
+echo ${passs} | sudo -S apt update -y
+echo "Instalacion de ROS"
+sleep 1
+echo ${passs} | sudo -S apt install -y ros-noetic-ros-base
+
+rosversion -d
+echo "Agregando PATH _ROS"
+sleep 1
+source /opt/ros/noetic/setup.bash
+rosversion -d
+
 cd /home/${2}
-echo ${passs} | sudo -S apt install -y install python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
+pwd
+echo "Herramientas y dependencias para construir paquetes ROS"
+sleep 1
+echo ${passs} | sudo -S apt install -y python3-rosdep python3-rosinstall python3-rosinstall-generator python3-wstool build-essential
+echo "Instalar rosdep"
+sleep 1
 echo ${passs} | sudo -S apt install -y python3-rosdep
+echo "Iniciar rosdep"
+sleep 1
 echo ${passs} | sudo -S rosdep init
+echo "Actualizar rosdep"
+sleep 1
 rosdep update
 
+echo "install net-tools"
+sleep 1
 echo ${passs} | sudo -S sudo apt install -y net-tools
+
+echo "================================================ Ejecutar: ================================================"
+echo "cd && echo \"source /opt/ros/noetic/setup.bash\" >> ~/.bashrc && echo \"echo \"CARGANDO BASHRC...\" \" >> ~/.bashrc && source ~/.bashrc"
+echo "==========================================================================================================="
 
 echo "================================================ Ejecutar: ================================================"
 echo "cd && mkdir -p /home/${2}/catkin_ws/src && cd /home/${2}/catkin_ws && catkin_make"
